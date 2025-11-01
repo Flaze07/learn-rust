@@ -1,3 +1,49 @@
+use std::collections::HashMap;
+use std::cmp::Eq;
+use std::hash::Hash;
+
+struct Counter<T: Hash + Eq>{
+    values: HashMap<T, u64>,
+}
+
+impl <T: Hash + Eq> Counter<T> {
+    fn new() -> Self {
+        Counter {
+            values: HashMap::new(),
+        }
+    }
+
+    fn count(&mut self, value: T) {
+        let temp_count = self.values.entry(value).or_insert(0);
+        *temp_count += 1;
+        // if self.values.contains_key(&value) {
+        //     *self.values.get_mute(&value).unwrap() += 1;
+        // } else {
+        //     self.values.insert(value, 1);
+        // }
+    }
+
+    fn times_seen(&self, value: T) -> u64 {
+        self.values.get(&value).copied().unwrap_or_default()
+    }
+}
+
 fn main() {
-    println!("HELLO WORLD AND HELLO THE END");
+    let mut ctr = Counter::new();
+    ctr.count(13);
+    ctr.count(14);
+    ctr.count(16);
+    ctr.count(14);
+    ctr.count(14);
+    ctr.count(11);
+
+    for i in 10..20 {
+        println!("saw {} values equal to {}", ctr.times_seen(i), i);
+    }
+
+    let mut strctr = Counter::new();
+    strctr.count("apple");
+    strctr.count("orange");
+    strctr.count("apple");
+    println!("got {} apples", strctr.times_seen("apple"));
 }
